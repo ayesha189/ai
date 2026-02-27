@@ -7,20 +7,20 @@ import math
 from heapq import heappush, heappop
 from collections import defaultdict
 
-COLOR_BG = "#0f1419"
-COLOR_GRID = "#1a1f2e"
-COLOR_START = "#00ff88"
-COLOR_GOAL = "#ff3366"
-COLOR_WALL = "#4a5f8f"
-COLOR_OPEN = "#ffaa33" 
-COLOR_CLOSED = "#3a3f4e" 
-COLOR_PATH = "#00ffcc"
-COLOR_TEXT = "#e8e9f3"
-COLOR_PANEL = "#1a1f2e"
-COLOR_ACCENT = "#00d4ff"
-COLOR_SUCCESS = "#00ff88"
-COLOR_ERROR = "#ff3366"
-COLOR_WARNING = "#ffaa33"
+COLOR_BG = "#1a1a1a"
+COLOR_GRID = "#2d2d2d"
+COLOR_START = "#4CAF50"
+COLOR_GOAL = "#E53935"
+COLOR_WALL = "#424242"
+COLOR_OPEN = "#FB8C00" 
+COLOR_CLOSED = "#37474F" 
+COLOR_PATH = "#42A5F5"
+COLOR_TEXT = "#d8d8d8"
+COLOR_PANEL = "#252525"
+COLOR_ACCENT = "#1E88E5"
+COLOR_SUCCESS = "#4CAF50"
+COLOR_ERROR = "#E53935"
+COLOR_WARNING = "#FB8C00"
 
 class DynamicPathfinder:
     def __init__(self, root):
