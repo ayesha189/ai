@@ -22,7 +22,7 @@ class DynamicPathfinder:
         self.root = root
         self.root.title("Dynamic A*/Greedy Pathfinding")
         self.root.configure(bg=COLOR_BG)
-        # ── Default parameters ───────────────────────
+   
         self.rows = 30
         self.cols = 40
         self.cell_size = 22
@@ -41,13 +41,11 @@ class DynamicPathfinder:
         self.speed_ms = 40
         self.create_gui()
         self.new_maze()
-    # ────────────────────────────────────────────────
-    # GUI Layout
-    # ────────────────────────────────────────────────
+
     def create_gui(self):
         top = tk.Frame(self.root, bg=COLOR_PANEL, padx=10, pady=8)
         top.pack(fill=tk.X)
-        # Left controls
+        
         left = tk.Frame(top, bg=COLOR_PANEL)
         left.pack(side=tk.LEFT, padx=10)
         tk.Label(left, text="Rows:", bg=COLOR_PANEL, fg=COLOR_TEXT).grid(row=0, column=0, sticky="e")
@@ -60,7 +58,7 @@ class DynamicPathfinder:
         self.ent_cols.grid(row=1, column=1, padx=4)
         tk.Button(left, text="New Maze", command=self.new_maze,
                   bg="#44475a", fg=COLOR_TEXT, activebackground="#6272a4").grid(row=2, column=0, columnspan=2, pady=6)
-        # Middle controls
+    
         mid = tk.Frame(top, bg=COLOR_PANEL)
         mid.pack(side=tk.LEFT, padx=20)
         tk.Label(mid, text="Algorithm:", bg=COLOR_PANEL, fg=COLOR_TEXT).pack()
@@ -69,7 +67,7 @@ class DynamicPathfinder:
         ttk.Combobox(mid, textvariable=self.heuristic, values=["Manhattan", "Euclidean"], state="readonly", width=12).pack(pady=4)
         tk.Checkbutton(mid, text="Dynamic obstacles", variable=self.dynamic_mode,
                        bg=COLOR_PANEL, fg=COLOR_TEXT, selectcolor="#44475a").pack(anchor="w")
-        # Right controls
+     
         right = tk.Frame(top, bg=COLOR_PANEL)
         right.pack(side=tk.RIGHT, padx=10)
         self.btn_start = tk.Button(right, text="Start / Replan", command=self.start_search,
@@ -81,15 +79,15 @@ class DynamicPathfinder:
         self.btn_clear_path = tk.Button(right, text="Clear Path Only", command=self.clear_path,
                                         bg="#6272a4", fg=COLOR_TEXT, width=14)
         self.btn_clear_path.pack(pady=3)
-        # Status bar
+   
         self.status = tk.Label(self.root, text="Ready", bg=COLOR_BG, fg="#6272a4", anchor="w")
         self.status.pack(fill=tk.X, padx=10, pady=(0,4))
-        # Canvas
+  
         self.canvas_frame = tk.Frame(self.root, bg=COLOR_BG)
         self.canvas_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=5)
         self.canvas = tk.Canvas(self.canvas_frame, bg=COLOR_BG, highlightthickness=0)
         self.canvas.pack(expand=True)
-        # Metrics
+      
         self.metrics_frame = tk.Frame(self.root, bg=COLOR_PANEL)
         self.metrics_frame.pack(fill=tk.X, padx=10, pady=5)
         self.lbl_nodes = tk.Label(self.metrics_frame, text="Nodes expanded: 0", bg=COLOR_PANEL, fg=COLOR_TEXT)
@@ -114,12 +112,12 @@ class DynamicPathfinder:
             messagebox.showwarning("Invalid size", "Rows/Cols should be 8–80 / 8–120")
             return
         self.grid = [[0 for _ in range(self.cols)] for _ in range(self.rows)]
-        # Random obstacles
+  
         for i in range(self.rows):
             for j in range(self.cols):
                 if random.random() < self.obstacle_prob:
                     self.grid[i][j] = 1
-        # Force start & goal free
+       
         self.start = (1, 1)
         self.goal = (self.rows-2, self.cols-2)
         self.grid[self.start[0]][self.start[1]] = 0
@@ -139,7 +137,7 @@ class DynamicPathfinder:
                 fill = COLOR_WALL if self.grid[i][j] else COLOR_GRID
                 tag = f"cell_{i}_{j}"
                 self.cells[i][j] = self.canvas.create_rectangle(x1,y1,x2,y2, fill=fill, outline="#44475a", tags=("grid",tag))
-        # Start & Goal
+        
         self.paint_cell(self.start, COLOR_START, "start")
         self.paint_cell(self.goal, COLOR_GOAL, "goal")
     def paint_cell(self, pos, color, tag=None):
@@ -149,19 +147,15 @@ class DynamicPathfinder:
             self.canvas.itemconfig(f"cell_{i}_{j}", fill=color)
             if tag:
                 self.canvas.addtag_withtag(tag, f"cell_{i}_{j}")
-    # ────────────────────────────────────────────────
-    # Heuristics
-    # ────────────────────────────────────────────────
+  
     def h(self, a, b):
         dx = abs(a[0] - b[0])
         dy = abs(a[1] - b[1])
         if self.heuristic.get() == "Manhattan":
             return dx + dy
-        else: # Euclidean
+        else: 
             return math.hypot(dx, dy)
-    # ────────────────────────────────────────────────
-    # A* / Greedy Best-First
-    # ────────────────────────────────────────────────
+
     def search(self):
         if self.running: return
         alg = self.algorithm.get()
@@ -173,28 +167,27 @@ class DynamicPathfinder:
             f_score = defaultdict(lambda: float('inf'))
             f_score[self.start] = self.h(self.start, self.goal)
             open_set = [(f_score[self.start], id(self.start), self.start)] # tie-breaker with id
-        else: # Greedy
+        else: 
             open_set = [(self.h(self.start, self.goal), id(self.start), self.start)]
         closed = set()
         nodes_expanded = 0
-        directions = [(-1,0),(1,0),(0,-1),(0,1)] # 4-way
+        directions = [(-1,0),(1,0),(0,-1),(0,1)] 
         start_time = time.perf_counter()
         self.running = True
         self.btn_start.config(state="disabled")
         self.btn_pause.config(state="normal", text="Pause")
         while open_set and self.running:
             if self.paused:
-                self.root.after(50, self.search) # continue polling
+                self.root.after(50, self.search) 
                 return
             _, _, current = heappop(open_set)
             if current in closed: continue
             closed.add(current)
             nodes_expanded += 1
-            # Paint frontier (approximation - only current open set visualization is heavy)
-            # We paint closed nodes instead (cheaper & still informative)
+          
             self.paint_cell(current, COLOR_CLOSED)
             if current == self.goal:
-                # reconstruct path
+         
                 path = []
                 cur = current
                 while cur != self.start:
@@ -229,10 +222,10 @@ class DynamicPathfinder:
                     else:
                         h_val = self.h((ni,nj), self.goal)
                         heappush(open_set, (h_val, id((ni,nj)), (ni,nj)))
-            # Small delay for animation
+            
             self.root.update()
             self.root.after(self.speed_ms)
-        # No path
+    
         if self.running:
             self.status.config(text="No path found", fg="#ff5555")
             self.finish_search()
@@ -268,16 +261,14 @@ class DynamicPathfinder:
         self.lbl_time.config(text="Time: — ms")
     def start_search(self):
         if self.running:
-            # Re-plan
+         
             self.clear_path(keep_walls=True)
             self.running = False
             self.paused = False
             self.root.after(100, self.search)
         else:
             self.search()
-    # ────────────────────────────────────────────────
-    # Dynamic mode – spawn obstacles during movement
-    # ────────────────────────────────────────────────
+    
     def dynamic_step(self):
         if not self.running or not self.dynamic_mode.get():
             return
@@ -294,9 +285,7 @@ class DynamicPathfinder:
             self.root.after(400, self.start_search) # replan soon
         else:
             self.root.after(200, self.dynamic_step)
-    # ────────────────────────────────────────────────
-    # Mouse click → toggle wall
-    # ────────────────────────────────────────────────
+
     def on_click(self, event):
         if self.running: return
         cs = self.cell_size
@@ -306,16 +295,16 @@ class DynamicPathfinder:
             return
         if (i,j) == self.start or (i,j) == self.goal:
             return
-        self.grid[i][j] ^= 1 # toggle
+        self.grid[i][j] ^= 1
         col = COLOR_WALL if self.grid[i][j] else COLOR_GRID
         self.paint_cell((i,j), col)
-# ────────────────────────────────────────────────
+
 if __name__ == "__main__":
     root = tk.Tk()
     app = DynamicPathfinder(root)
-    # Bind mouse click for manual wall editing
+    
     app.canvas.bind("<Button-1>", app.on_click)
-    # Start dynamic timer
+  
     def dynamic_loop():
         app.dynamic_step()
         root.after(350, dynamic_loop)
